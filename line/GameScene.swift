@@ -22,23 +22,23 @@ class GameScene: SKScene {
         self.physicsBody!.categoryBitMask = Bitmask.screen
         
         
-        var splinePoints = [CGPoint(x: 0, y: 500),
+        var splineLeft = [CGPoint(x: 0, y: 500),
                             CGPoint(x: 100, y: 400),
                             CGPoint(x: 200, y: 200),
                             CGPoint(x: 300, y: 10)]
-        var splinePoints2 = [CGPoint(x: 300, y: 500),
+        var splineRight = [CGPoint(x: 300, y: 500),
                              CGPoint(x: 200, y: 400)]
 
-        var ground = SKShapeNode(splinePoints: &splinePoints,
-                                 count: splinePoints.count)
+        var ground = SKShapeNode(splinePoints: &splineLeft,
+                                 count: splineLeft.count)
         ground.lineWidth = 5
         ground.physicsBody = SKPhysicsBody(edgeChainFrom: ground.path!)
         ground.physicsBody?.restitution = 0.75
         ground.physicsBody?.isDynamic = false
         
         self.addChild(ground)
-         ground = SKShapeNode(splinePoints: &splinePoints2,
-                                 count: splinePoints2.count)
+         ground = SKShapeNode(splinePoints: &splineRight,
+                                 count: splineRight.count)
         ground.lineWidth = 5
         ground.physicsBody = SKPhysicsBody(edgeChainFrom: ground.path!)
         ground.physicsBody?.restitution = 0.75
@@ -48,21 +48,17 @@ class GameScene: SKScene {
     }
     
     override func update(_ currentTime: TimeInterval) {
-        //spawnSand(location: CGPoint(x: self.size.width / 2, y: 700),color: UIColor.black, gravity: true, name:"nero")
-        //self.enumerateChildNodes(withName: "giallo") { granello, _ in
-         //   if granello.physicsBody!.velocity.dy > 0.2 {
-         //       granello.physicsBody!.velocity = CGVector(dx: 0, dy: granello.physicsBody!.velocity.dy * 1.1)}
-         //   }
+
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            spawnSand(location: touch.location(in: self), color: UIColor.yellow, gravity: false, name:"giallo")
-        
+            //spawnSand(location: touch.location(in: self), color: UIColor.yellow, gravity: false, name:"giallo")
+        spawnArrow(location: touch.location(in: self), color: UIColor.red, gravity: false, name: "freccia")
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if touches.count > 1 {
+        if touches.count > 0 {
             spawnArrow(location: touches.first!.location(in: self), color: UIColor.red, gravity: false, name: "freccia")
         }
     }
@@ -87,31 +83,32 @@ class GameScene: SKScene {
     }
     
     func spawnArrow(location: CGPoint, color: UIColor, gravity: Bool, name: String){
-        var points = [CGPoint(x: 10, y: 20),
-                     CGPoint(x: 40, y: 20),
-                     CGPoint(x: 30, y: 30),
-                     CGPoint(x: 40, y: 20),
-                     CGPoint(x: 30, y: 10),
-                     CGPoint(x: 40, y: 20),
-                     CGPoint(x: 25, y: 20),]
+        var points = [CGPoint(x: -10, y: 0),
+                     CGPoint(x: 10, y: 0),
+                     CGPoint(x: 5, y: 5),
+                     CGPoint(x: 10, y: 0),
+                     CGPoint(x: 5, y: -5)]
                      //CGPoint(x: 50, y: 10)]
         let arrow = SKShapeNode(points: &points,
                                           count: points.count)
+        arrow.position = location
+        
         arrow.lineWidth = 1
         arrow.strokeColor = color
-        //arrow.glowWidth = 0.5
-        arrow.position = location
         arrow.name = name
-       // arrow.run(SKAction.rotate(toAngle: 500, duration: 10, shortestUnitArc: false))   //Physics
-//        arrow.physicsBody = SKPhysicsBody(circleOfRadius: 20)
-//    arrow.physicsBody!.categoryBitMask = Bitmask.squares
-//        arrow.physicsBody!.linearDamping = 0
-//        arrow.physicsBody!.angularDamping = 0
-//        arrow.physicsBody!.restitution = 0.5
-//        arrow.physicsBody!.friction = 0.1
-//        arrow.physicsBody!.allowsRotation = true
-        
+        arrow.physicsBody = SKPhysicsBody(polygonFrom: arrow.path!)
+        arrow.physicsBody!.linearDamping = 0
+        arrow.physicsBody!.angularDamping = 0
+        arrow.physicsBody!.restitution = 0.5
+        arrow.physicsBody!.friction = 0.1
+        arrow.physicsBody!.isDynamic = true
+        arrow.physicsBody!.affectedByGravity = true
+
         self.addChild(arrow)
+        var angle = CGFloat(2 / 1)
+        angle =  angle * CGFloat.pi
+        arrow.run(SKAction.rotate(byAngle: CGFloat(1/2), duration: 0))
+        
 
             }
   }
